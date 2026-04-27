@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { buildSlugMap, resolveWikilink, WikilinkError } from "./wikilink";
+import { buildSlugMap, resolveWikilink, WikilinkError, DuplicateTitleError } from "./wikilink";
 
 const corpus = [
   { vaultPath: "Architecture/System Architecture.md", title: "System Architecture", slug: "/architecture/system-architecture" },
@@ -12,6 +12,17 @@ describe("buildSlugMap", () => {
     const map = buildSlugMap(corpus);
     expect(map.get("System Architecture")).toBe("/architecture/system-architecture");
     expect(map.get("system architecture")).toBe("/architecture/system-architecture");
+  });
+
+  it("throws DuplicateTitleError when two notes share a title", () => {
+    expect(() => buildSlugMap([
+      { vaultPath: "Hardware/A.md", title: "Setup", slug: "/hardware/a" },
+      { vaultPath: "Software/B.md", title: "Setup", slug: "/software/b" },
+    ])).toThrow(DuplicateTitleError);
+    expect(() => buildSlugMap([
+      { vaultPath: "Hardware/A.md", title: "Setup", slug: "/hardware/a" },
+      { vaultPath: "Software/B.md", title: "Setup", slug: "/software/b" },
+    ])).toThrow(/Hardware\/A\.md/);
   });
 });
 

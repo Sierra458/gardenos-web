@@ -7,7 +7,7 @@ const TOP_LEVEL_TO_URL: Record<string, string> = {
 };
 const DAILY_LOG_DATE = /^(\d{4}-\d{2}-\d{2})\b/;
 
-function slugifyTitle(title: string): string {
+export function slugifySegment(title: string): string {
   return title
     .normalize("NFKD")
     .replace(/[‐-―]/g, "-") // hyphens, en-dash, em-dash
@@ -43,6 +43,6 @@ export function vaultPathToSiteSlug(vaultRelPath: string): string | null {
     return `/log/${m[1]}`;
   }
 
-  const subSlug = slugifyTitle(filename);
+  const subSlug = slugifySegment(filename);
   return `/${TOP_LEVEL_TO_URL[topLevel]}/${subSlug}`;
 }
