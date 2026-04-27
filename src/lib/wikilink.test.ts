@@ -31,6 +31,11 @@ describe("resolveWikilink", () => {
       .toBe("/architecture/system-architecture#data-flow");
   });
 
+  it("preserves nested section anchors when target has multiple #", () => {
+    expect(resolveWikilink("System Architecture#Data Flow#Step 1", map, "src.md"))
+      .toBe("/architecture/system-architecture#data-flow-step-1");
+  });
+
   it("throws WikilinkError on broken target with source file context", () => {
     expect(() => resolveWikilink("Nonexistent", map, "Daily Log/2026-03-19 — Garden Monitor.md"))
       .toThrow(WikilinkError);

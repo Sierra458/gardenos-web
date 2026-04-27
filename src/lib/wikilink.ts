@@ -30,7 +30,9 @@ function anchorize(section: string): string {
 }
 
 export function resolveWikilink(target: string, map: SlugMap, sourceFile: string): string {
-  const [titlePart, sectionPart] = target.split("#", 2);
+  const hashIdx = target.indexOf("#");
+  const titlePart = hashIdx === -1 ? target : target.slice(0, hashIdx);
+  const sectionPart = hashIdx === -1 ? undefined : target.slice(hashIdx + 1);
   const slug = map.get(titlePart) ?? map.get(titlePart.toLowerCase());
   if (!slug) throw new WikilinkError(sourceFile, target);
   return sectionPart ? `${slug}#${anchorize(sectionPart)}` : slug;
