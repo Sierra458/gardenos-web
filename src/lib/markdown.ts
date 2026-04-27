@@ -17,18 +17,16 @@ interface RenderOptions {
   sourceFile: string;
 }
 
-const WIKILINK_RE = /\[\[([^\]\n]+?)\]\]/g;
-
 const remarkWikilinks: Plugin<[RenderOptions]> = (opts) => (tree) => {
+  const re = /\[\[([^\]\n]+?)\]\]/g;
   visit(tree, "text", (node, index, parent) => {
     if (!parent || index === undefined) return;
     const value = (node as { value: string }).value;
-    if (!WIKILINK_RE.test(value)) return;
-    WIKILINK_RE.lastIndex = 0;
+    if (!value.includes("[[")) return;
     const newChildren: unknown[] = [];
     let cursor = 0;
     let m: RegExpExecArray | null;
-    while ((m = WIKILINK_RE.exec(value)) !== null) {
+    while ((m = re.exec(value)) !== null) {
       if (m.index > cursor) {
         newChildren.push({ type: "text", value: value.slice(cursor, m.index) });
       }
@@ -53,7 +51,7 @@ export async function renderMarkdown(input: string, opts: RenderOptions): Promis
     .use(rehypeSlug)
     .use(rehypeAutolinkHeadings, { behavior: "wrap" })
     .use(rehypeShiki, { theme: "github-dark" })
-    .use(rehypeMermaid, { strategy: "img-svg" })
+    .use(rehypeMermaid, { strategy: "pre-mermaid" })
     .use(rehypeStringify)
     .process(input);
   return String(file);
