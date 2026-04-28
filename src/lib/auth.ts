@@ -45,7 +45,7 @@ export async function verifyCookie(value: string, secret: string): Promise<{ val
   }
 
   const key = await importHmacKey(secret, ["verify"]);
-  const ok = await crypto.subtle.verify("HMAC", key, sigBytes, enc.encode(payload));
+  const ok = await crypto.subtle.verify("HMAC", key, sigBytes as BufferSource, enc.encode(payload));
   if (!ok) return { valid: false };
 
   const expiresAt = Number(payload);
