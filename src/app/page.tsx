@@ -1,7 +1,7 @@
 import path from "node:path";
-import { loadAllNotes } from "@/lib/content";
+import { loadAllNotes, firstProseLine } from "@/lib/content";
 import { ActivityFeed } from "@/components/ActivityFeed";
-import { SectionGrid } from "@/components/SectionGrid";
+import { SectionGrid, Section } from "@/components/SectionGrid";
 import { renderMarkdown } from "@/lib/markdown";
 import { buildSlugMap } from "@/lib/wikilink";
 
@@ -23,15 +23,15 @@ export default async function HomePage() {
       slug: n.slug,
       title: n.title,
       date: n.date,
-      excerpt: n.body.split("\n").find(l => l.trim().length > 0)?.slice(0, 140),
+      excerpt: firstProseLine(n.body),
       source: "log" as const,
     }));
 
-  const sections = [
-    { href: "/architecture", emoji: "🏗️", label: "Architecture", count: notes.filter(n => n.slug.startsWith("/architecture/")).length, unit: "docs" },
-    { href: "/hardware", emoji: "🔧", label: "Hardware", count: notes.filter(n => n.slug.startsWith("/hardware/")).length, unit: "items" },
-    { href: "/software", emoji: "💻", label: "Software", count: notes.filter(n => n.slug.startsWith("/software/")).length, unit: "guides" },
-    { href: "/log", emoji: "📓", label: "Daily Log", count: notes.filter(n => n.slug.startsWith("/log/")).length, unit: "entries" },
+  const sections: Section[] = [
+    { href: "/architecture", emoji: "🏗️", label: "Architecture", count: notes.filter(n => n.slug.startsWith("/architecture/")).length, unit: "docs", unitSingular: "doc" },
+    { href: "/hardware", emoji: "🔧", label: "Hardware", count: notes.filter(n => n.slug.startsWith("/hardware/")).length, unit: "items", unitSingular: "item" },
+    { href: "/software", emoji: "💻", label: "Software", count: notes.filter(n => n.slug.startsWith("/software/")).length, unit: "guides", unitSingular: "guide" },
+    { href: "/log", emoji: "📓", label: "Daily Log", count: notes.filter(n => n.slug.startsWith("/log/")).length, unit: "entries", unitSingular: "entry" },
   ];
 
   return (
@@ -46,7 +46,7 @@ export default async function HomePage() {
       <SectionGrid sections={sections} />
 
       {homeHtml && (
-        <article className="mt-9 prose-invert max-w-none [&_a]:text-[var(--color-accent)] [&_h2]:text-lg [&_h2]:font-semibold [&_h2]:mt-6 [&_h2]:mb-2 [&_p]:mb-3 [&_p]:text-[var(--color-text-secondary)]" dangerouslySetInnerHTML={{ __html: homeHtml }} />
+        <article className="note-prose mt-9" dangerouslySetInnerHTML={{ __html: homeHtml }} />
       )}
     </div>
   );

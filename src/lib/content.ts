@@ -1,6 +1,7 @@
 import fg from "fast-glob";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
+import { cache } from "react";
 import { parseFrontmatter, PublishedFrontmatter } from "./frontmatter";
 
 export interface Note {
@@ -30,7 +31,7 @@ function contentPathToSlug(rel: string): string {
   return "/" + rel.replace(/\.md$/, "");
 }
 
-export async function loadAllNotes(contentDir: string): Promise<Note[]> {
+export const loadAllNotes = cache(async (contentDir: string): Promise<Note[]> => {
   const files = await fg(["**/*.md", "!_assets/**"], { cwd: contentDir });
   const notes: Note[] = [];
   const seenSlugs = new Map<string, string>();
@@ -54,8 +55,23 @@ export async function loadAllNotes(contentDir: string): Promise<Note[]> {
   }
   notes.sort((a, b) => b.date.localeCompare(a.date));
   return notes;
-}
+});
 
 export function getNoteBySlug(notes: Note[], slug: string): Note | undefined {
   return notes.find(n => n.slug === slug);
+}
+
+/**
+ * Picks the first line of `body` that looks like prose (skipping headings,
+ * Obsidian callouts, code fences, and frontmatter delimiters). Truncates to
+ * `max` chars and appends "…" if truncated.
+ */
+export function firstProseLine(body: string, max = 140): string | undefined {
+  for (const raw of body.split("\n")) {
+    const l = raw.trim();
+    if (!l) continue;
+    if (l.startsWith("#") || l.startsWith(">") || l.startsWith("```") || l.startsWith("---")) continue;
+    return l.length > max ? l.slice(0, max).trimEnd() + "…" : l;
+  }
+  return undefined;
 }

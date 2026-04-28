@@ -18,3 +18,31 @@ body {
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
 }
+
+/* Note prose — used in home overview and all rendered note pages */
+.note-prose {
+  max-width: none;
+  line-height: 1.6;
+}
+.note-prose a { color: var(--color-accent); }
+.note-prose a:hover { text-decoration: underline; }
+.note-prose h1 { font-size: 1.5rem; font-weight: 600; letter-spacing: -0.01em; margin-top: 1.5rem; margin-bottom: 0.75rem; color: var(--color-text-primary); }
+.note-prose h2 { font-size: 1.125rem; font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.5rem; color: var(--color-text-primary); }
+.note-prose h3 { font-size: 1rem; font-weight: 600; margin-top: 1.25rem; margin-bottom: 0.25rem; color: var(--color-text-primary); }
+.note-prose p { margin-bottom: 0.75rem; color: var(--color-text-secondary); }
+.note-prose ul, .note-prose ol { margin-bottom: 0.75rem; padding-left: 1.25rem; }
+.note-prose ul { list-style-type: disc; }
+.note-prose ol { list-style-type: decimal; }
+.note-prose li { color: var(--color-text-secondary); margin-bottom: 0.25rem; }
+.note-prose code { font-size: 0.85rem; background: var(--color-surface); color: var(--color-text-primary); padding: 0.1rem 0.3rem; border-radius: 4px; }
+.note-prose pre { background: var(--color-surface); padding: 1rem; border-radius: 8px; overflow-x: auto; margin-bottom: 1rem; border: 1px solid var(--color-border); }
+.note-prose pre code { background: transparent; padding: 0; font-size: 0.85rem; }
+.note-prose blockquote { border-left: 2px solid var(--color-accent); padding-left: 0.75rem; color: var(--color-text-secondary); margin-bottom: 0.75rem; }
+.note-prose img { max-width: 100%; height: auto; border-radius: 8px; margin: 1rem 0; }
+.note-prose table { border-collapse: collapse; margin-bottom: 1rem; }
+.note-prose th, .note-prose td { border: 1px solid var(--color-border); padding: 0.5rem 0.75rem; }
+.note-prose th { background: var(--color-surface); font-weight: 600; text-align: left; }
+.note-prose hr { border: 0; border-top: 1px solid var(--color-border); margin: 1.5rem 0; }
+/* Obsidian callouts (rendered by remark-callouts) */
+.note-prose .callout { background: var(--color-surface); border: 1px solid var(--color-border); border-left: 3px solid var(--color-accent); border-radius: 8px; padding: 0.75rem 1rem; margin-bottom: 1rem; }
+.note-prose .callout-title { font-weight: 600; color: var(--color-text-primary); margin-bottom: 0.25rem; }
