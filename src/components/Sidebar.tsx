@@ -1,0 +1,37 @@
+import { SidebarLink } from "./SidebarLink";
+
+interface SidebarProps {
+  stats?: { hardwareCount: number; lastUpdate: string };
+}
+
+export function Sidebar({ stats }: SidebarProps) {
+  return (
+    <aside className="w-[220px] shrink-0 border-r border-[var(--color-border)] p-5 text-sm">
+      <div className="mb-6 flex items-center gap-2 text-[var(--color-text-primary)] font-semibold">
+        <span className="text-[10px] text-[var(--color-accent)]">●</span>
+        <span>GardenOS</span>
+      </div>
+
+      <nav className="space-y-1">
+        <SidebarLink href="/">Home</SidebarLink>
+        <SidebarLink href="/architecture">Architecture</SidebarLink>
+        <SidebarLink href="/hardware">Hardware</SidebarLink>
+        <SidebarLink href="/software">Software</SidebarLink>
+        <SidebarLink href="/log">Daily Log</SidebarLink>
+      </nav>
+
+      {/* Phase 2 placeholder — Live sensor section. Hidden until populated. */}
+      <div className="mt-6 hidden" data-section="live" aria-hidden="true">
+        <div className="text-[10px] uppercase tracking-wider text-[var(--color-text-muted)] mb-1">Live</div>
+        <div className="text-[var(--color-text-muted)]">Coming in Phase 2.</div>
+      </div>
+
+      {stats && (
+        <div className="mt-6 pt-4 border-t border-[var(--color-border)] text-[11px] leading-relaxed text-[var(--color-text-muted)]">
+          <div>{stats.hardwareCount} hardware items</div>
+          <div>Last update: {stats.lastUpdate}</div>
+        </div>
+      )}
+    </aside>
+  );
+}
