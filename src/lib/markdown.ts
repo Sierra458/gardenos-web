@@ -30,9 +30,13 @@ const remarkWikilinks: Plugin<[RenderOptions]> = (opts) => (tree) => {
       if (m.index > cursor) {
         newChildren.push({ type: "text", value: value.slice(cursor, m.index) });
       }
-      const target = m[1];
+      const raw = m[1];
+      // Obsidian `|alias` syntax — `[[Note|Display Text]]` shows "Display Text" but links to "Note".
+      const pipeIdx = raw.indexOf("|");
+      const target = pipeIdx === -1 ? raw : raw.slice(0, pipeIdx);
+      const aliasDisplay = pipeIdx === -1 ? null : raw.slice(pipeIdx + 1);
       const url = resolveWikilink(target, opts.slugMap, opts.sourceFile);
-      const display = target.split("#")[0];
+      const display = aliasDisplay ?? target.split("#")[0];
       newChildren.push({ type: "link", url, children: [{ type: "text", value: display }] });
       cursor = m.index + m[0].length;
     }
