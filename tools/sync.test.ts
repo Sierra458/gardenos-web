@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { discoverPublishedNotes, mapVaultPathToContentPath } from "./sync";
+import { discoverPublishedNotes, mapVaultPathToContentPath, pruneStale } from "./sync";
 import path from "node:path";
 import { mkdtempSync, writeFileSync, mkdirSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -41,6 +41,26 @@ describe("discoverPublishedNotes", () => {
       expect(titles).toEqual(["GardenOS", "Pi 5 first boot", "Raspberry Pi 5", "System Architecture"]);
     } finally {
       rmSync(vault, { recursive: true, force: true });
+    }
+  });
+});
+
+describe("pruneStale", () => {
+  it("removes managed files not in the written set, leaves hand-authored alone", async () => {
+    const tmp = mkdtempSync(path.join(tmpdir(), "content-prune-"));
+    try {
+      mkdirSync(path.join(tmp, "hardware"), { recursive: true });
+      mkdirSync(path.join(tmp, "_drafts"), { recursive: true });
+      writeFileSync(path.join(tmp, "index.md"), "x");
+      writeFileSync(path.join(tmp, "hardware/keep.md"), "x");
+      writeFileSync(path.join(tmp, "hardware/stale.md"), "x");
+      writeFileSync(path.join(tmp, "about.md"), "x");           // hand-authored, not managed
+      writeFileSync(path.join(tmp, "_drafts/wip.md"), "x");      // hand-authored, not managed
+      const written = new Set(["index.md", "hardware/keep.md"]);
+      const removed = await pruneStale(tmp, written);
+      expect(removed.sort()).toEqual(["hardware/stale.md"]);
+    } finally {
+      rmSync(tmp, { recursive: true, force: true });
     }
   });
 });
