@@ -71,7 +71,7 @@ date: 2026-03-18
 - Benefits from afternoon shade in peak summer
 - Fertilize container-grown citronella biweekly during growing season
 
-**Sensor strategy:** Share sensor data with Zone 1 OR dedicate a sensor if budget allows (we only have 2 sensors currently — see [[#Sensor Allocation]] below)
+**Sensor strategy:** Share sensor data with Zone 1 OR dedicate a sensor if budget allows (we only have 2 sensors currently — see [Sensor Allocation](#sensor-allocation) below)
 **Threshold:** Water when reading drops to "moderately dry" range (~400–440, TBD)
 **Watering duration:** Medium — 12–18 seconds of pump flow
 **Special notes:**
