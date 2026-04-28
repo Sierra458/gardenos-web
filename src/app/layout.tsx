@@ -1,12 +1,29 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { Sidebar } from "@/components/Sidebar";
+import { LayoutShell } from "@/components/LayoutShell";
 import { loadAllNotes } from "@/lib/content";
 import path from "node:path";
 
 export const metadata: Metadata = {
   title: "GardenOS",
   description: "Garden Monitor — project artifacts",
+  applicationName: "GardenOS",
+  appleWebApp: {
+    capable: true,
+    title: "GardenOS",
+    statusBarStyle: "black-translucent",
+  },
+  formatDetection: {
+    telephone: false,
+  },
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+  themeColor: "#0a0a0a",
 };
 
 const CONTENT_DIR = path.resolve(process.cwd(), "content");
@@ -19,18 +36,15 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     const lastUpdate = notes[0]?.date ?? "—";
     stats = { hardwareCount, lastUpdate };
   } catch (err) {
-    // content/ may not exist on first run, OR a published note has malformed frontmatter.
-    // Either way: render sidebar without stats and surface the error to the operator.
     console.error("[layout] failed to load notes for sidebar stats:", err);
   }
 
   return (
     <html lang="en">
       <body>
-        <div className="flex min-h-screen">
-          <Sidebar stats={stats} />
-          <main className="flex-1 px-9 py-7 max-w-[72ch]">{children}</main>
-        </div>
+        <LayoutShell sidebar={<Sidebar stats={stats} />}>
+          {children}
+        </LayoutShell>
       </body>
     </html>
   );
