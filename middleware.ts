@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { verifyCookie, COOKIE_NAME } from "@/lib/auth";
 
 export const config = {
-  matcher: ["/((?!api/auth/login|login|_next/static|_next/image|favicon.ico|robots.txt).*)"],
+  matcher: ["/((?!api/auth/login(?:/|$)|login(?:/|$)|_next/static|_next/image|favicon\\.ico|robots\\.txt).*)"],
 };
 
 export async function middleware(req: NextRequest) {
@@ -21,7 +21,9 @@ export async function middleware(req: NextRequest) {
 
 function redirectToLogin(req: NextRequest) {
   const url = req.nextUrl.clone();
+  const originalFullPath = req.nextUrl.pathname + req.nextUrl.search;
   url.pathname = "/login";
-  url.searchParams.set("from", req.nextUrl.pathname);
+  url.search = "";
+  url.searchParams.set("from", originalFullPath);
   return NextResponse.redirect(url);
 }
