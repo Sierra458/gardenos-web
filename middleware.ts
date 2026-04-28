@@ -19,11 +19,16 @@ export async function middleware(req: NextRequest) {
   return NextResponse.next();
 }
 
+function isSafePath(p: string): boolean {
+  return p.startsWith("/") && !p.startsWith("//") && !p.startsWith("/\\");
+}
+
 function redirectToLogin(req: NextRequest) {
   const url = req.nextUrl.clone();
   const originalFullPath = req.nextUrl.pathname + req.nextUrl.search;
+  const safeOriginal = isSafePath(originalFullPath) ? originalFullPath : "/";
   url.pathname = "/login";
   url.search = "";
-  url.searchParams.set("from", originalFullPath);
+  url.searchParams.set("from", safeOriginal);
   return NextResponse.redirect(url);
 }

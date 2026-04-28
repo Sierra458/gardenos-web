@@ -11,6 +11,13 @@ function safeEqual(a: string, b: string): boolean {
   return timingSafeEqual(ab, bb);
 }
 
+function isSafePath(p: unknown): p is string {
+  return typeof p === "string"
+    && p.startsWith("/")
+    && !p.startsWith("//")
+    && !p.startsWith("/\\");
+}
+
 export async function POST(req: NextRequest) {
   const sitePassword = process.env.SITE_PASSWORD;
   const cookieSecret = process.env.COOKIE_SECRET;
@@ -18,8 +25,13 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Server misconfigured" }, { status: 500 });
   }
 
-  const body = await req.json().catch(() => ({}));
-  const { password, from } = body as { password?: string; from?: string };
+  let body: unknown;
+  try {
+    body = await req.json();
+  } catch {
+    return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
+  }
+  const { password, from } = (body ?? {}) as { password?: string; from?: string };
   if (typeof password !== "string" || !safeEqual(password, sitePassword)) {
     return NextResponse.json({ error: "Wrong password" }, { status: 401 });
   }
@@ -27,7 +39,7 @@ export async function POST(req: NextRequest) {
   const expiresAt = Date.now() + COOKIE_TTL_DAYS * 24 * 60 * 60 * 1000;
   const cookieValue = await signCookie(expiresAt, cookieSecret);
 
-  const safeFrom = typeof from === "string" && from.startsWith("/") ? from : "/";
+  const safeFrom = isSafePath(from) ? from : "/";
   const res = NextResponse.json({ redirect: safeFrom });
   res.cookies.set({
     name: COOKIE_NAME,

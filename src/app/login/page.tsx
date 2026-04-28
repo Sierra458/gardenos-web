@@ -10,19 +10,24 @@ export default function LoginPage() {
     e.preventDefault();
     setBusy(true);
     setError(null);
-    const params = new URLSearchParams(window.location.search);
-    const from = params.get("from") || "/";
-    const res = await fetch("/api/auth/login", {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({ password, from }),
-    });
-    if (res.ok) {
-      const { redirect } = await res.json();
-      window.location.href = redirect;
-    } else {
-      const { error } = await res.json().catch(() => ({ error: "Login failed" }));
-      setError(error || "Login failed");
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const from = params.get("from") || "/";
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ password, from }),
+      });
+      if (res.ok) {
+        const { redirect } = await res.json();
+        const safe = typeof redirect === "string" && redirect.startsWith("/") && !redirect.startsWith("//") && !redirect.startsWith("/\\")
+          ? redirect : "/";
+        window.location.href = safe;
+      } else {
+        const { error } = await res.json().catch(() => ({ error: "Login failed" }));
+        setError(error || "Login failed");
+      }
+    } finally {
       setBusy(false);
     }
   }
@@ -37,7 +42,9 @@ export default function LoginPage() {
         <label htmlFor="pw" className="block text-[11px] uppercase tracking-wider text-[var(--color-text-muted)] mb-2">Password</label>
         <input
           id="pw"
+          name="password"
           type="password"
+          autoComplete="current-password"
           autoFocus
           value={password}
           onChange={e => setPassword(e.target.value)}
