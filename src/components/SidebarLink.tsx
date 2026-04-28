@@ -4,7 +4,7 @@ import { usePathname } from "next/navigation";
 
 export function SidebarLink({ href, children }: { href: string; children: React.ReactNode }) {
   const path = usePathname();
-  const isActive = href === "/" ? path === "/" : path.startsWith(href);
+  const isActive = href === "/" ? path === "/" : path === href || path.startsWith(href + "/");
   return (
     <Link
       href={href}

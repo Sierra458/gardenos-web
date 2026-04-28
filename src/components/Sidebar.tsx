@@ -28,7 +28,7 @@ export function Sidebar({ stats }: SidebarProps) {
 
       {stats && (
         <div className="mt-6 pt-4 border-t border-[var(--color-border)] text-[11px] leading-relaxed text-[var(--color-text-muted)]">
-          <div>{stats.hardwareCount} hardware items</div>
+          <div>{stats.hardwareCount} hardware item{stats.hardwareCount === 1 ? "" : "s"}</div>
           <div>Last update: {stats.lastUpdate}</div>
         </div>
       )}

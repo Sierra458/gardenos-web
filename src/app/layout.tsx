@@ -18,8 +18,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     const hardwareCount = notes.filter(n => n.slug.startsWith("/hardware/")).length;
     const lastUpdate = notes[0]?.date ?? "—";
     stats = { hardwareCount, lastUpdate };
-  } catch {
-    // content/ may not exist on first run; sidebar still renders without stats
+  } catch (err) {
+    // content/ may not exist on first run, OR a published note has malformed frontmatter.
+    // Either way: render sidebar without stats and surface the error to the operator.
+    console.error("[layout] failed to load notes for sidebar stats:", err);
   }
 
   return (
