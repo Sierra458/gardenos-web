@@ -1,15 +1,78 @@
 # gardenos-web
 
-Friends-and-family docs site for the Garden Monitor project. See `Projects/Garden Monitor/Specs/2026-04-27-gardenos-web-design.md` in the vault for the design.
+Friends-and-family docs site for the Garden Monitor project. Lives at `garden.marsdesigns.io`.
 
-## Develop
+Design spec: `Projects/Garden Monitor/Specs/2026-04-27-gardenos-web-design.md` (in the Obsidian vault).
+Implementation plan: `Projects/Garden Monitor/Plans/2026-04-27-gardenos-web-plan.md`.
+
+## Develop locally
+
 ```bash
 npm install
 npm run dev
 ```
 
-## Publish from vault
+In dev mode without `COOKIE_SECRET` set, the auth middleware bypasses (so you can iterate). To exercise the auth flow, set both `SITE_PASSWORD` and `COOKIE_SECRET` and `NODE_ENV=production` (or run E2E: `npm run test:e2e`).
+
+## Publish updates from the vault
+
+1. Edit notes in Obsidian. Add `publish: true`, `title:`, and `date:` to any note you want on the site.
+2. Run:
+   ```bash
+   cp .env.local.example .env.local   # one-time, edit GARDEN_VAULT_PATH
+   npm run publish
+   ```
+3. Vercel auto-deploys when the push hits `main`.
+
+A `--dry-run` flag (or `GARDEN_DRY_RUN=1`) discovers + writes locally without committing or pushing — useful for previewing changes.
+
+## Pre-flight (one-time, before first deploy)
+
+- GitHub repo `gardenos-web` (private)
+- Vercel project linked to repo
+- Vercel DNS: `garden` CNAME → `cname.vercel-dns.com` on `marsdesigns.io`
+- Vercel env vars (Production scope):
+  - `SITE_PASSWORD` (the shared friends/family password)
+  - `COOKIE_SECRET` (`openssl rand -base64 48`)
+
+After env vars are set, trigger a redeploy so the auth middleware can read them.
+
+## Tests
+
 ```bash
-cp .env.local.example .env.local   # then edit GARDEN_VAULT_PATH
-npm run publish
+npm test          # unit tests (Vitest)
+npm run test:e2e  # E2E auth smoke (Playwright)
 ```
+
+Both should be run before any release. The E2E test catches integration bugs the unit tests miss (it caught a real one — Next.js middleware location — during initial build).
+
+## Tech stack
+
+- Next.js 15 (App Router) + React 19
+- TypeScript 5 (strict)
+- Tailwind CSS v4 (CSS-first config via `@theme`)
+- Vitest 2 (unit) + Playwright (E2E)
+- unified/remark/rehype + Obsidian-flavored extensions:
+  - `remark-callouts` for `> [!note]` syntax
+  - `@shikijs/rehype` for syntax highlighting (github-dark)
+  - `rehype-mermaid` for diagrams (pre-mermaid strategy — client-side render)
+  - Custom remark plugin for `[[wikilinks]]` resolution
+
+## Repository layout
+
+- `src/app/` — Next.js routes (home, login, log index, catch-all `[...slug]`)
+- `src/components/` — UI components (Sidebar, ActivityFeed, SectionGrid)
+- `src/lib/` — pure logic (frontmatter, slug, wikilink, content loader, markdown pipeline, auth)
+- `src/middleware.ts` — Edge runtime auth gate
+- `tools/sync.ts` — vault → content/ sync CLI (run via `npm run publish`)
+- `content/` — synced markdown (git-tracked, but produced by the sync tool — don't edit by hand)
+
+## Phase 2 (deferred)
+
+Live sensor data from the Pi 5. See spec §11 for the seams already in place:
+- Sidebar reserves a `data-section="live"` placeholder
+- Activity feed cards have a `data-source` attribute (`"log"` in v1; `"sensor"` and `"alert"` will be added in Phase 2)
+
+Other deferred items:
+- Rate limiting on `/api/auth/login` (plan §7 — currently no throttle)
+- Site search (Pagefind is the easy path when content grows)
