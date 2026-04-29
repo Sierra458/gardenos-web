@@ -38,19 +38,28 @@ The shelf is 63" tall (~5.3 ft). Pump must push water from a floor reservoir up 
 
 ## 2. Plumbing Layout
 
-```
-RESERVOIR (5-gal bucket on floor, lid cracked for overflow)
-    │
-    ▼
-12V DC PUMP ───── relay ───── nursery Pi GPIO
-    │
-    ▼ ½" main line zip-tied to vertical shelf upright
-    │
-    ├─ Tier 5 — ½" elbow → horizontal ½" run → ¼" tee → drip stake
-    ├─ Tier 4 — same
-    ├─ Tier 3 — same
-    ├─ Tier 2 — same
-    └─ Tier 1 — same (¼" line + adjustable drip emitter at each tray)
+```mermaid
+flowchart TD
+  Reservoir["Reservoir<br/>5-gal bucket on floor"]
+  Pump["12V DC pump"]
+  Relay["Relay"]
+  Pi["Nursery Pi GPIO"]
+  Main["½″ main line<br/>(zip-tied to vertical upright)"]
+  T5["Tier 5 — drip stake"]
+  T4["Tier 4 — drip stake"]
+  T3["Tier 3 — drip stake"]
+  T2["Tier 2 — drip stake"]
+  T1["Tier 1 — drip stake"]
+
+  Pi -->|GPIO| Relay
+  Relay --> Pump
+  Reservoir --> Pump
+  Pump --> Main
+  Main -->|½″ elbow + ¼″ tee| T5
+  Main --> T4
+  Main --> T3
+  Main --> T2
+  Main --> T1
 ```
 
 - **½" main tubing (50 ft kit)** runs vertically up the back of the shelf.

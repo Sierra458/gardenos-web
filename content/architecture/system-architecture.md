@@ -16,40 +16,36 @@ date: 2026-03-18
 
 ## High-Level Overview
 
-```
-┌─────────────────────────────────────────────────────┐
-│          SOUTH SIDE — 4 WATERING ZONES              │
-│                                                      │
-│  Z1: Spearmint    Z2: Lavender (×3)                 │
-│  Z3: Citronella   Z4: Potato Tower                  │
-│                                                      │
-│  ┌──────────────┐     ┌──────────────────────┐      │
-│  │ Soil Moisture │────▶│   Arduino Mega        │      │
-│  │ Sensors (×2+) │     │   (Sensor Controller) │      │
-│  └──────────────┘     │                        │      │
-│                        │   Solenoid Valves (×4) │      │
-│  ┌──────────────┐     │   Motor Driver ──▶ Pump│      │
-│  │ Nicla Sense  │─I2C─▶│                        │      │
-│  │ Env          │     └─────────┬────────────┘      │
-│  └──────────────┘               │ USB Serial         │
-│                                  ▼                    │
-│  ┌──────────────┐     ┌──────────────────────┐      │
-│  │ Nicla Vision │─WiFi─▶│   Raspberry Pi 5     │      │
-│  │ (Camera)     │      │   (Central Hub)       │      │
-│  └──────────────┘      │                        │      │
-│                         │   • Data storage       │      │
-│                         │   • Watering scheduler │      │
-│                         │   • Alert logic        │      │
-│                         │   • API server         │      │
-│                         └─────────┬────────────┘      │
-│                                   │ WiFi              │
-│                          ┌────────┴────────┐          │
-│                          ▼                 ▼          │
-│                   ┌────────────┐   ┌────────────┐    │
-│                   │ ESP 5" Disp│   │ Phone / PC │    │
-│                   │ (Local UI) │   │ (Web UI)   │    │
-│                   └────────────┘   └────────────┘    │
-└───────────────────────────────────────────────────────┘
+```mermaid
+flowchart TD
+  subgraph SOUTH["South side — 4 watering zones"]
+    Z1["Z1: Spearmint"]
+    Z2["Z2: Lavender (×3)"]
+    Z3["Z3: Citronella"]
+    Z4["Z4: Potato Tower"]
+  end
+
+  Sensors["Soil moisture<br/>sensors (×2+)"]
+  NSE["Nicla Sense Env<br/>temp · humidity · gas"]
+  NV["Nicla Vision<br/>camera + ML"]
+
+  Mega["Arduino Mega<br/>sensor controller"]
+  Valves["Solenoid valves ×4"]
+  Pump["Motor driver → pump"]
+  Pi5["Raspberry Pi 5<br/>central hub<br/>storage · scheduler · API"]
+  ESP["ESP 5″ display<br/>local UI"]
+  Web["Phone / Web UI"]
+
+  Sensors -->|analog| Mega
+  NSE -->|I²C| Mega
+  Mega --> Valves
+  Mega --> Pump
+  Valves --> SOUTH
+  Pump --> SOUTH
+  Mega -->|USB serial| Pi5
+  NV -->|WiFi| Pi5
+  Pi5 -->|MQTT| ESP
+  Pi5 -->|HTTP| Web
 ```
 
 ---

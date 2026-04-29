@@ -127,31 +127,28 @@ We currently have **2 × [[Capacitive Soil Moisture Sensor]]**. With 4 zones tha
 
 ## Irrigation Hardware Design
 
-```
-                    12V Power Supply
-                          │
-                          ▼
-┌─────────────────────────────────────────────┐
-│              WATER RESERVOIR                 │
-│         (5-gallon bucket or similar)         │
-└──────────┬──────────────────────────────────┘
-           │
-           ▼
-    ┌──────────────┐
-    │  12V Pump     │◀── [[Motor Driver Module]] ◀── [[Arduino Mega]]
-    │  (peristaltic │
-    │   recommended)│
-    └──────┬───────┘
-           │
-           ▼
-    ┌──────────────┐
-    │  4-Way Valve  │  (or 4 individual solenoid valves)
-    │  Manifold     │
-    └──┬──┬──┬──┬──┘
-       │  │  │  │
-       ▼  ▼  ▼  ▼
-      Z1  Z2 Z3 Z4
-     Mint Lav Cit Potato
+```mermaid
+flowchart TD
+  PSU["12V power supply"]
+  Reservoir["Water reservoir<br/>(5-gallon bucket)"]
+  Pump["12V peristaltic pump"]
+  Driver["Motor driver"]
+  Mega["Arduino Mega"]
+  Manifold["4-way manifold<br/>or individual solenoids"]
+  Z1["Z1<br/>Spearmint"]
+  Z2["Z2<br/>Lavender ×3"]
+  Z3["Z3<br/>Citronella"]
+  Z4["Z4<br/>Potato Tower"]
+
+  PSU --> Reservoir
+  Reservoir --> Pump
+  Mega -->|control signal| Driver
+  Driver -->|drive| Pump
+  Pump --> Manifold
+  Manifold --> Z1
+  Manifold --> Z2
+  Manifold --> Z3
+  Manifold --> Z4
 ```
 
 ### Option A: Single Pump + Solenoid Valves (Recommended)

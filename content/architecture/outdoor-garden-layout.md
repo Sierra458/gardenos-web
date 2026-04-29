@@ -125,11 +125,37 @@ Apply **2–3 inches of straw mulch everywhere** — including the raised bed be
 
 ## Phase 2 — Drip Irrigation
 
-The hose spigot becomes the input for the [[Outdoor Watering System]] drip irrigation. A solenoid valve on the spigot, controlled by [[Arduino Mega]], feeds drip lines to:
-- Raised bed (per-zone via subdivided manifold).
-- Both corn containers.
-- Watermelon container.
-- Existing herb pots.
+The hose spigot becomes the input for the [[Outdoor Watering System]] drip irrigation. A solenoid valve on the spigot, controlled by [[Arduino Mega]], feeds drip lines to all garden zones.
+
+```mermaid
+flowchart TD
+  Spigot["Hose spigot"]
+  MainValve["Master solenoid<br/>(Arduino-controlled)"]
+  Mega["Arduino Mega"]
+  Manifold["Drip manifold<br/>(per-zone branches)"]
+  RB["Raised bed<br/>(tomato/pepper/jalapeño/onion)"]
+  Corn1["Corn container A"]
+  Corn2["Corn container B"]
+  WM["Watermelon container"]
+  Lav["Lavender box"]
+  Cit["Citronella pot"]
+  Mint["Spearmint pot"]
+  Pot["Potato tower"]
+  Lime["Lime tree"]
+
+  Mega -->|control| MainValve
+  Spigot --> MainValve
+  MainValve --> Manifold
+  Manifold --> RB
+  Manifold --> Corn1
+  Manifold --> Corn2
+  Manifold --> WM
+  Manifold --> Lav
+  Manifold --> Cit
+  Manifold --> Mint
+  Manifold --> Pot
+  Manifold --> Lime
+```
 
 Each line gets [[Capacitive Soil Moisture Sensor|moisture sensors]] feeding [[Arduino Mega]]. Logic per zone documented in [[Outdoor Watering System]].
 
