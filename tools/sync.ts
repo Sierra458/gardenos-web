@@ -86,7 +86,9 @@ function findAssetReferences(notes: DiscoveredNote[], assetIndex: Map<string, st
 }
 
 async function copyAssets(resolved: Map<string, ResolvedAsset>, vaultRoot: string, contentRoot: string): Promise<void> {
-  const assetsDir = path.join(contentRoot, "_assets");
+  // Assets go to public/_assets/ so Next.js's static file server serves them at /_assets/<name>.
+  const repoRoot = path.resolve(contentRoot, "..");
+  const assetsDir = path.join(repoRoot, "public", "_assets");
   for (const asset of resolved.values()) {
     const src = path.join(vaultRoot, asset.vaultPath);
     const dst = path.join(assetsDir, asset.filename);
@@ -158,8 +160,8 @@ function runGit(args: string[], cwd: string, opts: { capture?: boolean } = {}): 
 
 function gitCommitAndPush(contentRoot: string, summary: string): void {
   const repoRoot = path.resolve(contentRoot, "..");
-  runGit(["add", "content"], repoRoot);
-  const status = runGit(["status", "--porcelain", "content"], repoRoot, { capture: true });
+  runGit(["add", "content", "public/_assets"], repoRoot);
+  const status = runGit(["status", "--porcelain", "content", "public/_assets"], repoRoot, { capture: true });
   if (!status.stdout.trim()) {
     console.log("  ↳ no changes to commit");
     return;
