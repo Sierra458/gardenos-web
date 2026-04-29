@@ -1,7 +1,7 @@
 ---
 publish: true
-title: "Arduino Setup Guide"
-date: 2026-03-19
+title: Arduino Setup Guide
+date: '2026-03-19'
 ---
 > Step-by-step guide to install the Arduino IDE, upload code, and read soil moisture sensors.
 > Part of the [[Garden Monitor]] project.

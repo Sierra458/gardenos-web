@@ -1,7 +1,7 @@
 ---
 publish: true
-title: "ESP Display 5in"
-date: 2026-03-18
+title: ESP Display 5in
+date: '2026-03-18'
 ---
 > 5″ ESP-based touchscreen display for [[Garden Monitor]].
 

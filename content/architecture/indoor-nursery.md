@@ -1,7 +1,7 @@
 ---
 publish: true
-title: "Indoor Nursery"
-date: 2026-04-19
+title: Indoor Nursery
+date: '2026-04-19'
 ---
 > Status snapshot of the indoor seed-starting nursery for [[Garden Monitor]]. Seeds planted **2026-04-14**, four trays of 12 cells each on the [[Nursery System Design|SOLIGT 5-tier shelf]]. Garage location, Houston.
 

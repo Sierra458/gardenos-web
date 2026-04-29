@@ -1,7 +1,7 @@
 ---
 publish: true
-title: "Outdoor Watering System"
-date: 2026-03-18
+title: Outdoor Watering System
+date: '2026-03-18'
 ---
 > Detailed system design for automated watering of 4 plant zones on the south side of the house in Houston, TX.
 > Part of the [[Garden Monitor]] project · See also [[System Architecture]]

@@ -1,7 +1,7 @@
 ---
 publish: true
-title: "Houston Planting Calendar"
-date: 2026-03-22
+title: Houston Planting Calendar
+date: '2026-03-22'
 ---
 > Zone 9a (Houston, TX) seed-by-seed planting decisions for the [[Garden Monitor]] system. Last frost mid-February; March is the most valuable planting window of the year.
 

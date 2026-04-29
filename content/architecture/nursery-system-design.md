@@ -1,7 +1,7 @@
 ---
 publish: true
-title: "Nursery System Design"
-date: 2026-04-04
+title: Nursery System Design
+date: '2026-04-04'
 ---
 > Indoor seed-starting nursery for [[Garden Monitor]] — drip irrigation, sensor wiring, camera, and tier strategy for the SOLIGT 5-tier greenhouse on the [[Raspberry Pi 5]] / older Pi node.
 

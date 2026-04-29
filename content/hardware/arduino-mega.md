@@ -1,7 +1,7 @@
 ---
 publish: true
-title: "Arduino Mega"
-date: 2026-03-18
+title: Arduino Mega
+date: '2026-03-18'
 ---
 > Primary sensor controller for the [[Garden Monitor]] project.
 

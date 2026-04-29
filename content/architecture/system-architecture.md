@@ -1,7 +1,7 @@
 ---
 publish: true
-title: "System Architecture"
-date: 2026-03-18
+title: System Architecture
+date: '2026-03-18'
 ---
 > How all the hardware and software connects in [[Garden Monitor]].
 

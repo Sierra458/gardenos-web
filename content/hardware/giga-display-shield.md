@@ -1,7 +1,7 @@
 ---
 publish: true
-title: "GIGA Display Shield"
-date: 2026-03-18
+title: GIGA Display Shield
+date: '2026-03-18'
 ---
 > 3.97″ touchscreen for local dashboard in [[Garden Monitor]].
 

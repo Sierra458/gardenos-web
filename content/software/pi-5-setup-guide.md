@@ -1,7 +1,7 @@
 ---
 publish: true
-title: "Pi 5 Setup Guide"
-date: 2026-03-19
+title: Pi 5 Setup Guide
+date: '2026-03-19'
 ---
 > Step-by-step guide to set up the Raspberry Pi 5 to receive sensor data from the Arduino Mega.
 > Part of the [[Garden Monitor]] project.

@@ -1,7 +1,7 @@
 ---
 publish: true
-title: "Patio Orientation"
-date: 2026-04-26
+title: Patio Orientation
+date: '2026-04-26'
 ---
 > The patio house wall faces **230° (southwest)**. This is the toughest orientation for Houston gardening. Implications and mitigations for [[Outdoor Garden Layout]] and [[Garden Monitor]].
 

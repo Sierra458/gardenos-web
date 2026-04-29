@@ -1,7 +1,7 @@
 ---
 publish: true
-title: "Hardware Inventory"
-date: 2026-03-18
+title: Hardware Inventory
+date: '2026-03-18'
 ---
 > Complete list of components for the [[Garden Monitor]] project.
 

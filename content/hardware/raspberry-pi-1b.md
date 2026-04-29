@@ -1,7 +1,7 @@
 ---
 publish: true
-title: "Raspberry Pi 1B"
-date: 2026-03-18
+title: Raspberry Pi 1B
+date: '2026-03-18'
 ---
 > Legacy boards — potential satellite sensor nodes for [[Garden Monitor]].
 

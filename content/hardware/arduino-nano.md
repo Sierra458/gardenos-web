@@ -1,7 +1,7 @@
 ---
 publish: true
-title: "Arduino Nano"
-date: 2026-03-18
+title: Arduino Nano
+date: '2026-03-18'
 ---
 > Compact secondary sensor node for [[Garden Monitor]].
 

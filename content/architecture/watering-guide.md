@@ -1,7 +1,7 @@
 ---
 publish: true
-title: "Watering Guide"
-date: 2026-04-19
+title: Watering Guide
+date: '2026-04-19'
 ---
 > Per-plant watering schedules for the [[Garden Monitor]] indoor nursery and outdoor garden. Houston (Zone 9a, southwest-facing patio).
 

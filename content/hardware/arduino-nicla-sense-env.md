@@ -1,7 +1,7 @@
 ---
 publish: true
-title: "Arduino Nicla Sense Env"
-date: 2026-03-18
+title: Arduino Nicla Sense Env
+date: '2026-03-18'
 ---
 > Environmental sensor board for air quality and climate monitoring in [[Garden Monitor]].
 

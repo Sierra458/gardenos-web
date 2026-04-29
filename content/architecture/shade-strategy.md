@@ -1,7 +1,7 @@
 ---
 publish: true
-title: "Shade Strategy"
-date: 2026-04-26
+title: Shade Strategy
+date: '2026-04-26'
 ---
 > Shade cloth design for the raised bed in [[Outdoor Garden Layout]] — protection from late-May through mid-September Houston afternoon heat. Critical given the [[Patio Orientation|230° SW orientation]].
 

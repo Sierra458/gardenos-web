@@ -1,7 +1,7 @@
 ---
 publish: true
-title: "Capacitive Soil Moisture Sensor"
-date: 2026-03-18
+title: Capacitive Soil Moisture Sensor
+date: '2026-03-18'
 ---
 > Corrosion-resistant soil moisture sensing for [[Garden Monitor]].
 

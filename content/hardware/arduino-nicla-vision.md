@@ -1,7 +1,7 @@
 ---
 publish: true
-title: "Arduino Nicla Vision"
-date: 2026-03-18
+title: Arduino Nicla Vision
+date: '2026-03-18'
 ---
 > Camera-equipped board for visual plant health monitoring in [[Garden Monitor]].
 

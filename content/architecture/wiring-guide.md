@@ -1,7 +1,7 @@
 ---
 publish: true
-title: "Wiring Guide"
-date: 2026-03-19
+title: Wiring Guide
+date: '2026-03-19'
 ---
 > Step-by-step beginner wiring guide for the [[Garden Monitor]] project.
 > ⚠️ Always wire with the Arduino **unplugged from USB/power**.

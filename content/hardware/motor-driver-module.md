@@ -1,7 +1,7 @@
 ---
 publish: true
-title: "Motor Driver Module"
-date: 2026-03-18
+title: Motor Driver Module
+date: '2026-03-18'
 ---
 > Controls water pump for automated irrigation in [[Garden Monitor]].
 

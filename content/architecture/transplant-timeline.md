@@ -1,7 +1,7 @@
 ---
 publish: true
-title: "Transplant Timeline"
-date: 2026-04-19
+title: Transplant Timeline
+date: '2026-04-19'
 ---
 > Per-plant readiness criteria and target dates for moving seedlings from the [[Indoor Nursery]] to the [[Outdoor Garden Layout]]. Updated as the [[Garden Monitor]] nursery progresses.
 

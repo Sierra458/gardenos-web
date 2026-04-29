@@ -1,7 +1,7 @@
 ---
 publish: true
-title: "Outdoor Garden Layout"
-date: 2026-04-24
+title: Outdoor Garden Layout
+date: '2026-04-24'
 ---
 > Patio garden design for [[Garden Monitor]] — raised bed, corn containers, watermelon trellis, herb stand, lime tree, and potato tower. Houston stone patio, southwest-facing house wall.
 
