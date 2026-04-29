@@ -36,6 +36,9 @@ export default async function HomePage() {
   const swCount = notes.filter(n => n.slug.startsWith("/software/")).length;
   const logCount = notes.filter(n => n.slug.startsWith("/log/")).length;
   const photoCount = notes.filter(n => n.slug.startsWith("/photos/")).length;
+  // Count plants that have at least one photo tagged.
+  const { buildPlantSummaries } = await import("@/lib/plants");
+  const plantCount = buildPlantSummaries(notes).filter(p => p.count > 0).length;
   const lastUpdate = notes[0]?.date ?? "—";
 
   const sections: Section[] = [
@@ -83,6 +86,15 @@ export default async function HomePage() {
       unit: "days",
       unitSingular: "day",
       description: "Garden photos grouped by the day they were taken.",
+    },
+    {
+      href: "/plants",
+      emoji: "🌿",
+      label: "Plants",
+      count: plantCount,
+      unit: "plants",
+      unitSingular: "plant",
+      description: "Per-plant photo timelines, sorted chronologically.",
     },
   ];
 

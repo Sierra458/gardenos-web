@@ -24,6 +24,7 @@ export function Sidebar({ stats }: SidebarProps) {
         <SidebarLink href="/software">Software</SidebarLink>
         <SidebarLink href="/log">Daily Log</SidebarLink>
         <SidebarLink href="/photos">Photos</SidebarLink>
+        <SidebarLink href="/plants">Plants</SidebarLink>
       </nav>
 
       {/* Phase 2 placeholder — Live sensor section. Hidden until populated. */}

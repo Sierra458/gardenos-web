@@ -3,6 +3,7 @@ import fg from "fast-glob";
 import { readFile, writeFile, mkdir, rm, copyFile, stat } from "node:fs/promises";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
+import matter from "gray-matter";
 import { parseFrontmatter, PublishedFrontmatter } from "../src/lib/frontmatter";
 import { vaultPathToSiteSlug } from "../src/lib/slug";
 
@@ -117,12 +118,11 @@ async function writeNotes(notes: DiscoveredNote[], contentRoot: string): Promise
     seen.set(rel, note.vaultRelPath);
     const dst = path.join(contentRoot, rel);
     const body = rewriteBody(note.body);
-    const trimmed = body.trimStart();
-    const tail = trimmed.endsWith("\n") ? "" : "\n";
-    // Only round-trip the fields PublishedFrontmatter declares; vault-only fields ignored.
-    const frontmatter = `---\npublish: true\ntitle: ${JSON.stringify(note.title)}\ndate: ${note.date}\n---\n`;
+    // Preserve the full frontmatter (including custom fields like `zones`, `tags`, etc.)
+    // by re-serializing the parsed object via gray-matter's stringify.
+    const out = matter.stringify(body.trimStart(), note.frontmatter);
     await mkdir(path.dirname(dst), { recursive: true });
-    await writeFile(dst, frontmatter + trimmed + tail, "utf8");
+    await writeFile(dst, out, "utf8");
     written.push(rel);
   }
   return { written };
