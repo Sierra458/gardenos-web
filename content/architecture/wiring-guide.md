@@ -95,6 +95,10 @@ Looking at the Arduino Mega with the USB port facing LEFT:
 
 ---
 
+## Wiring Diagram (Visual)
+
+![Soil moisture sensor wiring to Arduino Mega 2560](/_assets/wiring-soil-sensors.svg)
+
 ## Wiring Diagram (Text Version)
 
 ```
