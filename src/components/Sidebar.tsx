@@ -1,4 +1,5 @@
 import { SidebarLink } from "./SidebarLink";
+import { SearchTriggerButton } from "./SearchModal";
 
 interface SidebarProps {
   stats?: { hardwareCount: number; lastUpdate: string };
@@ -7,9 +8,13 @@ interface SidebarProps {
 export function Sidebar({ stats }: SidebarProps) {
   return (
     <aside className="w-[260px] md:w-[220px] h-full md:h-auto bg-[var(--color-canvas)] shrink-0 border-r border-[var(--color-border)] p-5 pt-6 text-sm overflow-y-auto">
-      <div className="mb-6 flex items-center gap-2 text-[var(--color-text-primary)] font-semibold">
+      <div className="mb-4 flex items-center gap-2 text-[var(--color-text-primary)] font-semibold">
         <span className="text-[10px] text-[var(--color-accent)]">●</span>
         <span>GardenOS</span>
+      </div>
+
+      <div className="mb-5">
+        <SearchTriggerButton />
       </div>
 
       <nav className="space-y-1">

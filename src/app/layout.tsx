@@ -3,6 +3,7 @@ import "./globals.css";
 import { Sidebar } from "@/components/Sidebar";
 import { LayoutShell } from "@/components/LayoutShell";
 import { MermaidRenderer } from "@/components/MermaidRenderer";
+import { SearchModal } from "@/components/SearchModal";
 import { loadAllNotes } from "@/lib/content";
 import path from "node:path";
 
@@ -47,6 +48,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           {children}
         </LayoutShell>
         <MermaidRenderer />
+        <SearchModal />
       </body>
     </html>
   );

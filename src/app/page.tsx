@@ -3,6 +3,9 @@ import { loadAllNotes, firstProseLine } from "@/lib/content";
 import { ActivityFeed } from "@/components/ActivityFeed";
 import { SectionGrid, Section } from "@/components/SectionGrid";
 import { StatsHero } from "@/components/StatsHero";
+import { TodayWidget } from "@/components/TodayWidget";
+import { GardenStatus, type Zone } from "@/components/GardenStatus";
+import { getCarryForwardItems } from "@/lib/today";
 import { renderMarkdown } from "@/lib/markdown";
 import { buildSlugMap } from "@/lib/wikilink";
 
@@ -95,12 +98,24 @@ export default async function HomePage() {
 
       <StatsHero
         stats={[
-          { label: "Sections", value: 4 },
+          { label: "Sections", value: 5 },
           { label: "Hardware", value: hwCount, detail: hwCount === 1 ? "item" : "items" },
           { label: "Entries", value: logCount, detail: logCount === 1 ? "log" : "logs" },
           { label: "Updated", value: lastUpdate.slice(5), detail: lastUpdate.slice(0, 4) },
         ]}
       />
+
+      {/* Today widget — pending actions from the most recent daily log */}
+      {(() => {
+        const { items, sourceSlug, sourceDate } = getCarryForwardItems(notes);
+        return <TodayWidget items={items} sourceSlug={sourceSlug} sourceDate={sourceDate} />;
+      })()}
+
+      {/* Garden Status — per-zone state from Garden Monitor.md frontmatter */}
+      {(() => {
+        const zones = (home?.frontmatter as { zones?: Zone[] } | undefined)?.zones;
+        return zones && zones.length > 0 ? <GardenStatus zones={zones} /> : null;
+      })()}
 
       <div className="text-[11px] uppercase tracking-wider text-[var(--color-text-muted)] mb-2">Recent updates</div>
       <ActivityFeed items={logs} />
