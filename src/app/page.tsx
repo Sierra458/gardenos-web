@@ -32,6 +32,7 @@ export default async function HomePage() {
   const hwCount = notes.filter(n => n.slug.startsWith("/hardware/")).length;
   const swCount = notes.filter(n => n.slug.startsWith("/software/")).length;
   const logCount = notes.filter(n => n.slug.startsWith("/log/")).length;
+  const photoCount = notes.filter(n => n.slug.startsWith("/photos/")).length;
   const lastUpdate = notes[0]?.date ?? "—";
 
   const sections: Section[] = [
@@ -70,6 +71,15 @@ export default async function HomePage() {
       unit: "entries",
       unitSingular: "entry",
       description: "Day-by-day progress and observations.",
+    },
+    {
+      href: "/photos",
+      emoji: "📸",
+      label: "Photos",
+      count: photoCount,
+      unit: "days",
+      unitSingular: "day",
+      description: "Garden photos grouped by the day they were taken.",
     },
   ];
 
