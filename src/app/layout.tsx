@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { Sidebar } from "@/components/Sidebar";
 import { LayoutShell } from "@/components/LayoutShell";
+import { MermaidRenderer } from "@/components/MermaidRenderer";
 import { loadAllNotes } from "@/lib/content";
 import path from "node:path";
 
@@ -45,6 +46,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <LayoutShell sidebar={<Sidebar stats={stats} />}>
           {children}
         </LayoutShell>
+        <MermaidRenderer />
       </body>
     </html>
   );
