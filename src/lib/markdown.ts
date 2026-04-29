@@ -54,8 +54,9 @@ export async function renderMarkdown(input: string, opts: RenderOptions): Promis
     .use(remarkRehype, { allowDangerousHtml: false })
     .use(rehypeSlug)
     .use(rehypeAutolinkHeadings, { behavior: "wrap" })
-    .use(rehypeShiki, { theme: "github-dark" })
+    // Mermaid first so it can claim ```mermaid blocks before Shiki tries to syntax-highlight them.
     .use(rehypeMermaid, { strategy: "pre-mermaid" })
+    .use(rehypeShiki, { theme: "github-dark" })
     .use(rehypeStringify)
     .process(input);
   return String(file);
