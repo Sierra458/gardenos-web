@@ -52,18 +52,24 @@ export async function POST(req: NextRequest) {
   const body = await req.json().catch(() => ({}));
   const messages: UIMessage[] = body.messages ?? [];
 
-  // Log user's last message metadata (no full content — privacy / cost)
+  // Log user's last message metadata. AI SDK v6 UIMessage has no top-level `content`;
+  // text lives in `parts: [{type: "text", text: "..."}, ...]`. We concatenate text parts
+  // for history and count non-text parts as image attachments.
   const last = messages[messages.length - 1];
   if (last?.role === "user") {
-    const partsCount = Array.isArray((last as { parts?: unknown[] }).parts)
-      ? (last as { parts: unknown[] }).parts.length
-      : 1;
-    const lastContent = (last as { content?: unknown }).content;
+    const parts = Array.isArray((last as { parts?: unknown[] }).parts)
+      ? (last as { parts: unknown[] }).parts
+      : [];
+    const textParts = parts
+      .filter((p): p is { type: string; text: string } =>
+        typeof p === "object" && p !== null && (p as { type?: unknown }).type === "text" && typeof (p as { text?: unknown }).text === "string")
+      .map(p => p.text);
+    const imageCount = parts.length - textParts.length;
     await appendChatMessage({
       role: "user",
-      content: typeof lastContent === "string" ? lastContent : "[multipart]",
+      content: textParts.join("\n") || (imageCount > 0 ? "(images only)" : ""),
       ts: Date.now(),
-      imageCount: partsCount > 1 ? partsCount - 1 : 0,
+      imageCount,
     }).catch(() => { /* non-blocking */ });
   }
 
