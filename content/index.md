@@ -1,37 +1,46 @@
 ---
 publish: true
 title: Garden Monitor
-date: '2026-03-18'
+date: '2026-05-17'
 zones:
-  - name: Lavender
-    status: thriving
-    note: First bloom seen 2026-04-26
-  - name: Spearmint
-    status: stressed
-    note: 'Yellowing leaves, wilting tall stems — needs partial shade or larger pot'
-  - name: Citronella
+  - name: Tomatoes
     status: watch
-    note: Some lower-leaf yellowing; mulch pulled back from stem
+    note: >-
+      3 plants transplanted ~2026-05-12; recovering from shock, smaller than
+      ideal
+  - name: Bell Peppers
+    status: thriving
+    note: BP1 excellent; BP2 lagging but alive
+  - name: Onions
+    status: stressed
+    note: '4 weak shoots — harvest as scallions, replant proper sets in October'
   - name: Potato Tower
     status: thriving
-    note: Top growth + side-hole sprouts; add another soil/hay layer soon
+    note: Multiple plants from top + side holes; add next layer soon
   - name: Lime Tree
     status: thriving
-    note: Flower buds forming — fruit possible this season
+    note: Vigorous new flush; treating citrus leaf miner + slug slime
+  - name: Watermelon
+    status: watch
+    note: Single seedling in oversized pot; install trellis within 2 weeks
+  - name: Corn
+    status: thriving
+    note: '4 stalks ~12–18" tall, vibrant green; pollination window 2–4 weeks out'
+  - name: Lavender
+    status: stressed
+    note: 'Half flowering, half dying back; aggressive prune needed'
+  - name: Citronella
+    status: watch
+    note: New top growth strong; prune dead lower stems
+  - name: Carrots
+    status: dead
+    note: Total germination failure — bucket repurposed for okra or bush beans
+  - name: Raised Bed
+    status: thriving
+    note: 50% shade cloth installed; all transplants in
   - name: Indoor Nursery
     status: watch
-    note: Shelf 3 thriving; Shelf 4 (top) lost to heat — replant or repurpose
-  - name: Raised Bed
-    status: ready
-    note: >-
-      Mulched and waiting for tomato/pepper/jalapeño/onion transplants
-      ~2026-05-08
-  - name: Corn Containers
-    status: healthy
-    note: 'Transplanted 2026-04-26 (5 stalks each, two pots side-by-side)'
-  - name: Watermelon
-    status: healthy
-    note: Transplanted 2026-04-26; trellis ready for vertical training
+    note: Shelf 3 still production winner; top shelf abandoned for season
 ---
 > Automated garden & plant monitoring system using Raspberry Pi and Arduino hardware.
 
@@ -50,11 +59,12 @@ zones:
 | Area | Status | Notes |
 |------|--------|-------|
 | Hardware inventory | ✅ Complete | All parts catalogued |
-| System architecture | 🟡 Planning | Needs finalization |
-| Sensor wiring | ⬜ Not started | |
+| System architecture | ✅ Complete | Hub-and-spoke MQTT design finalized |
+| Outdoor transplants | ✅ Complete | All warm-season crops in ground/containers |
+| Sensor wiring | ⬜ Not started | Phase 1 hardware purchase pending |
 | Firmware (Arduino) | ⬜ Not started | |
-| Backend (Pi 5) | ⬜ Not started | |
-| Display UI | ⬜ Not started | |
+| Backend (Pi 5) | ⬜ Not started | Pi 3+B will be central hub first |
+| Display UI | ⬜ Not started | Tablet + Grafana likely path |
 | Deployment | ⬜ Not started | |
 
 ---
@@ -62,17 +72,18 @@ zones:
 ## 🔧 Hardware at a Glance
 
 **Compute**
-- [[Raspberry Pi 5]] — Main hub (16 GB RAM, 128 GB SD)
-- [[Raspberry Pi 1B]] × 2 — Legacy boards (potential satellite nodes)
+- [[Raspberry Pi 5]] — Reserved for Phase 2 expansion (16 GB RAM, 128 GB SD)
+- Raspberry Pi 3+B — Central hub (MQTT broker, InfluxDB 1.8, Grafana, Python automation)
+- [[Raspberry Pi 1B]] × 2 — Subsystem nodes (outdoor bridge, nursery, hydroponics)
 
 **Microcontrollers**
-- [[Arduino Mega]] — Primary sensor controller
-- [[Arduino Nano]] — Compact secondary node
-- [[Arduino Nicla Vision]] — Camera-based plant health
-- [[Arduino Nicla Sense Env]] — Air quality & environment
+- [[Arduino Mega]] — Outdoor container sensor hub
+- [[Arduino Nano]] — Potato tower multi-depth sensing
+- [[Arduino Nicla Vision]] — Roaming ML plant health camera
+- [[Arduino Nicla Sense Env]] — Hydroponics air quality
 
 **Displays**
-- [[GIGA Display Shield]] — 3.97″ touchscreen (needs GIGA R1 host)
+- [[GIGA Display Shield]] — 3.97″ touchscreen (needs GIGA R1 host, not yet purchased)
 - [[ESP Display 5in]] — 5″ ESP-based display (standalone option)
 
 **Peripherals**
