@@ -12,8 +12,17 @@ export interface ChatHistoryMessage {
 
 const HISTORY_PREFIX = "chat-history";
 
+// Hardcoded to Matt's timezone so a 11pm CST message lands in the SAME day blob
+// as the daily log he'd write the next morning. If multi-region/multi-user is ever
+// needed, switch to per-user timezone (stored alongside the admin session).
+const HISTORY_TIMEZONE = "America/Chicago";
+const DATE_FORMATTER = new Intl.DateTimeFormat("en-CA", {
+  timeZone: HISTORY_TIMEZONE,
+  year: "numeric", month: "2-digit", day: "2-digit",
+});
+
 function todayKey(date = new Date()): string {
-  return `${HISTORY_PREFIX}/${date.toISOString().slice(0, 10)}.json`;
+  return `${HISTORY_PREFIX}/${DATE_FORMATTER.format(date)}.json`;
 }
 
 export async function readChatHistory(date = new Date()): Promise<ChatHistoryMessage[]> {
