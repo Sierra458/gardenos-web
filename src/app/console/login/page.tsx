@@ -17,7 +17,9 @@ export default function AdminLoginPage() {
       });
       if (res.ok) {
         const { redirect } = await res.json();
-        window.location.href = typeof redirect === "string" && redirect.startsWith("/") ? redirect : "/console";
+        const safe = typeof redirect === "string" && redirect.startsWith("/") && !redirect.startsWith("//") && !redirect.startsWith("/\\")
+          ? redirect : "/console";
+        window.location.href = safe;
       } else {
         const { error } = await res.json().catch(() => ({ error: "Login failed" }));
         setError(error || "Login failed");
