@@ -12,7 +12,9 @@ export async function uploadBlob(bytes: Buffer | Uint8Array, originalName: strin
   const ext = originalName.split(".").pop()?.toLowerCase() ?? "bin";
   const id = randomBytes(8).toString("hex");
   const pathname = `${PREFIX}/${new Date().toISOString().slice(0, 10)}/${id}.${ext}`;
-  const result = await put(pathname, bytes, {
+  // @vercel/blob's put() requires Buffer (not Uint8Array) — normalize before passing.
+  const buf = Buffer.isBuffer(bytes) ? bytes : Buffer.from(bytes);
+  const result = await put(pathname, buf, {
     access: "public",         // signed URL access is "public" in @vercel/blob v2+; the random pathname is the secret
     contentType: mime,
     addRandomSuffix: false,    // we already added random
