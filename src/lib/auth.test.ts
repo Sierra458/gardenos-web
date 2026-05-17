@@ -13,7 +13,11 @@ describe("auth cookie", () => {
 
   it("rejects a tampered cookie", async () => {
     const value = await signCookie(Date.now() + 60_000, SECRET);
-    const tampered = value.replace(/.$/, c => (c === "a" ? "b" : "a"));
+    // Tamper deterministically: prepend "X" to the signature portion.
+    // The signature has a fixed length the verifier expects; an extra char
+    // shifts every base64 boundary and guarantees byte-level corruption.
+    const dot = value.indexOf(".");
+    const tampered = value.slice(0, dot + 1) + "X" + value.slice(dot + 1);
     const result = await verifyCookie(tampered, SECRET);
     expect(result.valid).toBe(false);
   });
