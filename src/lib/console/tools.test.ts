@@ -10,6 +10,6 @@ describe("diagnoseTool", () => {
   });
 
   it("description mentions plant health", () => {
-    expect(diagnoseTool.description.toLowerCase()).toContain("plant");
+    expect((diagnoseTool.description ?? "").toLowerCase()).toContain("plant");
   });
 });
