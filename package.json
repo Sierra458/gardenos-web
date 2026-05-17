@@ -14,8 +14,13 @@
     "publish": "tsx tools/sync.ts"
   },
   "dependencies": {
+    "@octokit/rest": "^22.0.1",
     "@shikijs/rehype": "^1.24.0",
+    "@upstash/redis": "^1.38.0",
+    "@vercel/blob": "^2.3.3",
+    "ai": "^6.0.184",
     "fast-glob": "^3.3.2",
+    "file-type": "^22.0.1",
     "fuse.js": "^7.3.0",
     "gray-matter": "^4.0.3",
     "mermaid": "^11.14.0",
