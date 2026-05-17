@@ -1,12 +1,16 @@
 import { tool } from "ai";
 import { z } from "zod";
 
+// Exported separately so tests can call .safeParse without wrestling the
+// AI SDK v6 FlexibleSchema wrapper type that tool({inputSchema}) returns.
+export const diagnoseInputSchema = z.object({
+  image_urls: z.array(z.string().url()).min(1, "at least one image required"),
+  question: z.string().optional(),
+});
+
 export const diagnoseTool = tool({
   description: "Analyze attached plant photos for health issues (pests, disease, deficiencies, stress). Returns an ephemeral analysis — no writeback. Use when the user asks 'what's wrong' or wants identification/treatment advice.",
-  inputSchema: z.object({
-    image_urls: z.array(z.string().url()).min(1, "at least one image required"),
-    question: z.string().optional(),
-  }),
+  inputSchema: diagnoseInputSchema,
   // No execute() — the AI SDK calls Claude vision directly via the messages parameter.
   // This tool is "signal-only": its presence tells Claude "the user wants a diagnosis,"
   // and Claude's vision-enabled response IS the diagnosis. The chat route doesn't need
