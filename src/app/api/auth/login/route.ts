@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { signCookie, COOKIE_NAME, COOKIE_TTL_DAYS } from "@/lib/auth";
+import { clientIp } from "@/lib/client-ip";
 import { kv } from "@/lib/kv";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { timingSafeEqual } from "node:crypto";
@@ -15,12 +16,6 @@ function safeEqual(a: string, b: string): boolean {
 
 function isSafePath(p: unknown): p is string {
   return typeof p === "string" && p.startsWith("/") && !p.startsWith("//") && !p.startsWith("/\\");
-}
-
-function clientIp(req: NextRequest): string {
-  const xff = req.headers.get("x-forwarded-for");
-  if (xff) return xff.split(",")[0].trim();
-  return "unknown";
 }
 
 export async function POST(req: NextRequest) {
