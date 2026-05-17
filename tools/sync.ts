@@ -15,7 +15,7 @@ interface DiscoveredNote {
   frontmatter: PublishedFrontmatter;
 }
 
-const ALLOWED_TOP = ["Architecture", "Hardware", "Software", "Daily Log", "Photos"];
+const ALLOWED_TOP = ["Architecture", "Hardware", "Software", "Daily Log", "Photos", "Plant Logs"];
 
 export function mapVaultPathToContentPath(vaultRelPath: string): string {
   if (vaultRelPath === "Garden Monitor.md") return "index.md";
@@ -128,7 +128,7 @@ async function writeNotes(notes: DiscoveredNote[], contentRoot: string): Promise
   return { written };
 }
 
-const MANAGED_PATHS = ["index.md", "architecture/", "hardware/", "software/", "log/", "photos/"];
+const MANAGED_PATHS = ["index.md", "architecture/", "hardware/", "software/", "log/", "photos/", "plant-logs/"];
 
 function isManaged(rel: string): boolean {
   return MANAGED_PATHS.some(p => p.endsWith("/") ? rel.startsWith(p) : rel === p);

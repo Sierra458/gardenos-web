@@ -1,10 +1,11 @@
-const ALLOWED_TOP_LEVELS = new Set(["Architecture", "Hardware", "Software", "Daily Log", "Photos"]);
+const ALLOWED_TOP_LEVELS = new Set(["Architecture", "Hardware", "Software", "Daily Log", "Photos", "Plant Logs"]);
 const TOP_LEVEL_TO_URL: Record<string, string> = {
   "Architecture": "architecture",
   "Hardware": "hardware",
   "Software": "software",
   "Daily Log": "log",
   "Photos": "photos",
+  "Plant Logs": "plant-logs",
 };
 const DAILY_LOG_DATE = /^(\d{4}-\d{2}-\d{2})\b/;
 
