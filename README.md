@@ -46,6 +46,41 @@ npm run test:e2e  # E2E auth smoke (Playwright)
 
 Both should be run before any release. The E2E test catches integration bugs the unit tests miss (it caught a real one — Next.js middleware location — during initial build).
 
+## Garden Console (admin-only, Phase 2 feature)
+
+The admin-only `/console` route lets you chat with Claude to diagnose plants, draft photo notes, draft daily logs, and open AI-authored PRs.
+
+### One-time setup
+1. Provision Vercel Marketplace integrations (Upstash KV, Vercel Blob, AI Gateway).
+2. Set `ADMIN_PASSWORD`, `AI_GATEWAY_API_KEY`, `GITHUB_TOKEN` in Vercel Production env vars.
+3. On your Mac, clone a mirror of this repo for the inbox-sync launchd job:
+   ```bash
+   git clone git@github.com:Sierra458/gardenos-web.git ~/code/gardenos-web-mirror
+   ```
+4. Install the launchd job:
+   ```bash
+   cp tools/launchd/io.marsdesigns.gardenos-inbox-sync.plist ~/Library/LaunchAgents/
+   launchctl load ~/Library/LaunchAgents/io.marsdesigns.gardenos-inbox-sync.plist
+   ```
+   Verify it's running:
+   ```bash
+   launchctl list | grep gardenos
+   tail ~/Library/Logs/gardenos-inbox-sync.log
+   ```
+
+### Daily use
+- Open `garden.marsdesigns.io/console` on your phone.
+- Drop photos, ask "what's wrong?" (diagnose) or "tag these from today" (photo note) or "add to today's log: ..." (daily log).
+- When Claude proposes content, reply "commit" to open a PR.
+- Tap the PR link, review the diff, tap Merge. Vercel auto-deploys; vault-inbox files appear in `~/Documents/MaRs/Projects/Garden Monitor/_AI Inbox/` within 5 min.
+
+### Rollback
+- **Instant:** Vercel Dashboard → Deployments → previous green → Promote to Production.
+- **Permanent:** `gh pr revert <PR-number>` → merge revert PR.
+- **Vault cleanup:** Delete the bad file from `~/Documents/MaRs/Projects/Garden Monitor/...`.
+
+See `Projects/Garden Monitor/Specs/2026-05-17-garden-console-design.md` for full spec.
+
 ## Tech stack
 
 - Next.js 15 (App Router) + React 19
