@@ -2,8 +2,10 @@ import { NextRequest, NextResponse } from "next/server";
 import { streamText, convertToModelMessages, type UIMessage } from "ai";
 import { kv } from "@/lib/kv";
 import { checkRateLimit } from "@/lib/rate-limit";
-import { phase1Tools } from "@/lib/console/tools";
+import { allTools } from "@/lib/console/tools";
 import { SYSTEM_PROMPT } from "@/lib/console/prompts";
+import { extractCarryForward } from "@/lib/console/carry-forward";
+import { readFileFromMain } from "@/lib/console/github";
 import { appendChatMessage } from "@/lib/console/history";
 
 export const runtime = "nodejs";
@@ -73,17 +75,30 @@ export async function POST(req: NextRequest) {
     }).catch(() => { /* non-blocking */ });
   }
 
+  // Pre-fetch yesterday's log to extract carry-forward items.
+  // Best-effort: if GitHub is unreachable or the file doesn't exist, proceed without.
+  const today = new Date().toISOString().slice(0, 10);
+  const yesterday = new Date(Date.now() - 24 * 3600 * 1000).toISOString().slice(0, 10);
+  const recentLogPath = `content/log/${yesterday}.md`;
+  const recentLogBody = await readFileFromMain(recentLogPath).catch(() => null);
+  const carryForward = recentLogBody ? extractCarryForward(recentLogBody) : [];
+
+  const systemAddendum = `\n\nCURRENT CONTEXT
+---------------
+Today's date: ${today}
+Carry-forward items from ${yesterday}: ${carryForward.length === 0 ? "(none)" : "\n" + carryForward.map(i => "- [ ] " + i).join("\n")}
+`;
+
   const result = streamText({
     model: "anthropic/claude-sonnet-4-6",
-    system: SYSTEM_PROMPT,
+    system: SYSTEM_PROMPT + systemAddendum,
     providerOptions: {
       anthropic: {
-        // Prompt caching for the static system prompt (D12)
-        cacheControl: { type: "ephemeral" },
+        cacheControl: { type: "ephemeral" }, // caches SYSTEM_PROMPT block; addendum changes daily so cache resets nightly (acceptable)
       },
     },
     messages: await convertToModelMessages(messages),
-    tools: phase1Tools,
+    tools: allTools,
     maxOutputTokens: 1500,
     onFinish: async ({ text }) => {
       await appendChatMessage({
