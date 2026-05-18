@@ -1,5 +1,6 @@
 import { tool } from "ai";
 import { z } from "zod";
+import { createAiPr } from "./github";
 
 // Exported separately so tests can call .safeParse without wrestling the
 // AI SDK v6 FlexibleSchema wrapper type that tool({inputSchema}) returns.
@@ -52,4 +53,30 @@ export const phase2Tools = {
   ...phase1Tools,
   propose_photo_tags: proposePhotoTagsTool,
   draft_daily_log: draftDailyLogTool,
+};
+
+const fileSchema = z.object({
+  path: z.string(),
+  content: z.string(),
+  isBinary: z.boolean().optional(),
+});
+
+export const commitToGithubInputSchema = z.object({
+  title: z.string(),
+  body: z.string(),
+  files: z.array(fileSchema).min(1).max(50),
+});
+
+export const commitToGithubTool = tool({
+  description: "Open a PR with the proposed files. ONLY call this after the user has explicitly confirmed in chat (e.g. 'yes, commit'). Files must be under content/, vault-inbox/, or public/_assets/.",
+  inputSchema: commitToGithubInputSchema,
+  execute: async ({ title, body, files }) => {
+    const pr = await createAiPr({ title, body, files });
+    return { url: pr.url, number: pr.number, message: `PR #${pr.number} opened — review and merge: ${pr.url}` };
+  },
+});
+
+export const allTools = {
+  ...phase2Tools,
+  commit_to_github: commitToGithubTool,
 };
