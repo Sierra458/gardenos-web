@@ -35,4 +35,21 @@ export const proposePhotoTagsTool = tool({
   // Same signal-only pattern as diagnoseTool — Claude's response IS the proposed content.
 });
 
-export const phase2Tools = { ...phase1Tools, propose_photo_tags: proposePhotoTagsTool };
+export const draftDailyLogInputSchema = z.object({
+  date: z.string().regex(ISO_DATE, "must be YYYY-MM-DD"),
+  notes: z.string().optional(),
+  image_urls: z.array(z.string().url()).optional(),
+});
+
+export const draftDailyLogTool = tool({
+  description: "Draft a Daily Log/<date> — Garden Monitor.md entry. Reads carry-forward from the previous log automatically. Returns proposed content for preview. Does NOT commit.",
+  inputSchema: draftDailyLogInputSchema,
+  // Signal-only — Claude's response IS the proposed content. The chat route injects
+  // carry-forward items from the previous log into the system prompt before calling streamText.
+});
+
+export const phase2Tools = {
+  ...phase1Tools,
+  propose_photo_tags: proposePhotoTagsTool,
+  draft_daily_log: draftDailyLogTool,
+};

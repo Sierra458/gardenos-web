@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { diagnoseTool, diagnoseInputSchema } from "./tools";
 import { proposePhotoTagsTool, proposePhotoTagsInputSchema } from "./tools";
+import { draftDailyLogTool, draftDailyLogInputSchema } from "./tools";
 
 describe("diagnoseTool", () => {
   it("has a zod schema accepting image_urls + optional question", () => {
@@ -27,6 +28,21 @@ describe("proposePhotoTagsTool", () => {
       image_urls: ["https://x/a.jpg"],
       date: "2026-05-18",
       filenames: ["img_5734.jpg"],
+    }).success).toBe(true);
+  });
+});
+
+describe("draftDailyLogTool", () => {
+  it("requires a YYYY-MM-DD date", () => {
+    expect(draftDailyLogInputSchema.safeParse({ date: "2026-05-18" }).success).toBe(true);
+    expect(draftDailyLogInputSchema.safeParse({ date: "May 18" }).success).toBe(false);
+  });
+
+  it("accepts optional notes + image_urls", () => {
+    expect(draftDailyLogInputSchema.safeParse({
+      date: "2026-05-18",
+      notes: "pruned the lavender",
+      image_urls: ["https://x/a.jpg"],
     }).success).toBe(true);
   });
 });
