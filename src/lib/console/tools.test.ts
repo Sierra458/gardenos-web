@@ -66,11 +66,12 @@ describe("commitToGithubTool", () => {
       createAiPr: vi.fn().mockResolvedValue({ url: "https://github.com/x/y/pull/3", number: 3 }),
     }));
     const mod = await import("./tools");
+    // AI SDK v6 typed execute() return as `T | AsyncIterable<T>`; narrow for the test
     const result = await mod.commitToGithubTool.execute!({
       title: "AI: photos 2026-05-18",
       body: "test",
       files: [{ path: "content/photos/2026-05-18.md", content: "x" }],
-    } as any, {} as any);
+    } as any, {} as any) as { url: string; number: number; message: string };
     expect(result.url).toContain("/pull/3");
     expect(result.number).toBe(3);
   });
