@@ -4,6 +4,7 @@ import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport, type FileUIPart, type UIMessage, type UIMessagePart } from "ai";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { ImageDropzone, type UploadedImage } from "./ImageDropzone";
+import { MessagePreview } from "./MessagePreview";
 
 interface HistoryMessage {
   role: "user" | "assistant" | "tool";
@@ -100,6 +101,16 @@ export function ChatPanel() {
                   return (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img key={i} src={p.url} alt="" className="max-w-full rounded mt-2" />
+                  );
+                }
+                if (typeof p.type === "string" && p.type.startsWith("tool-")) {
+                  const anyP = p as { type: string; output?: { url?: string; number?: number; message?: string }; input?: unknown };
+                  const toolName = anyP.type.slice(5);
+                  return (
+                    <MessagePreview
+                      key={i}
+                      tool={{ toolName, result: anyP.output, args: anyP.input }}
+                    />
                   );
                 }
                 return null;
