@@ -51,4 +51,18 @@ describe("checkRateLimit", () => {
     const second = kv._store.get("x")!.expiresAt;
     expect(second).toBe(first); // expiry unchanged on subsequent calls
   });
+
+  it("fails open when KV throws (deploy-config / outage safety net)", async () => {
+    const brokenKv = {
+      incr: async () => { throw new Error("KV unreachable"); },
+      expire: async () => { throw new Error("KV unreachable"); },
+    };
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+    const r = await checkRateLimit(brokenKv as any, "k", 5, 600);
+    expect(r.allowed).toBe(true);          // does NOT block users on KV failure
+    expect(r.remaining).toBe(5);            // full bucket reported back
+    expect(r.retryAfterSeconds).toBe(0);
+    expect(warn).toHaveBeenCalled();        // warning surfaces in logs
+    warn.mockRestore();
+  });
 });

@@ -12,6 +12,12 @@ export interface RateLimitResult {
 /**
  * Fixed-window counter via Upstash INCR. First INCR in the window
  * also sets EXPIRE so the counter naturally resets. Race-safe.
+ *
+ * Fail-soft: if KV is unavailable (e.g., env vars not yet provisioned
+ * after a deploy, or transient Upstash outage), this returns {allowed:true}
+ * with a warning log. Reasoning: a deploy-config issue should not break
+ * authentication for the entire site. The rate limit returns to enforcing
+ * once KV is reachable again.
  */
 export async function checkRateLimit(
   kv: KvLike,
@@ -19,12 +25,17 @@ export async function checkRateLimit(
   limit: number,
   windowSeconds: number,
 ): Promise<RateLimitResult> {
-  const count = await kv.incr(key);
-  if (count === 1) {
-    await kv.expire(key, windowSeconds);
+  try {
+    const count = await kv.incr(key);
+    if (count === 1) {
+      await kv.expire(key, windowSeconds);
+    }
+    if (count > limit) {
+      return { allowed: false, remaining: 0, retryAfterSeconds: windowSeconds };
+    }
+    return { allowed: true, remaining: limit - count, retryAfterSeconds: 0 };
+  } catch (err) {
+    console.warn("[rate-limit] KV unavailable, failing open for key:", key, err);
+    return { allowed: true, remaining: limit, retryAfterSeconds: 0 };
   }
-  if (count > limit) {
-    return { allowed: false, remaining: 0, retryAfterSeconds: windowSeconds };
-  }
-  return { allowed: true, remaining: limit - count, retryAfterSeconds: 0 };
 }
