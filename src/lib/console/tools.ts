@@ -20,3 +20,19 @@ export const diagnoseTool = tool({
 // Phase 2 tools (propose_photo_tags, draft_daily_log, commit_to_github) added in Tasks 23–26.
 
 export const phase1Tools = { diagnose: diagnoseTool };
+
+const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
+
+export const proposePhotoTagsInputSchema = z.object({
+  image_urls: z.array(z.string().url()).min(1),
+  date: z.string().regex(ISO_DATE, "must be YYYY-MM-DD"),
+  filenames: z.array(z.string()).optional(),
+});
+
+export const proposePhotoTagsTool = tool({
+  description: "Generate a Photos/<date>.md note from attached images. Returns proposed content (frontmatter + body) for preview. Does NOT commit.",
+  inputSchema: proposePhotoTagsInputSchema,
+  // Same signal-only pattern as diagnoseTool — Claude's response IS the proposed content.
+});
+
+export const phase2Tools = { ...phase1Tools, propose_photo_tags: proposePhotoTagsTool };
