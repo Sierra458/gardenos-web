@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { signCookie, COOKIE_NAME, COOKIE_TTL_DAYS } from "@/lib/auth";
-import { clientIp } from "@/lib/client-ip";
+import { signAdminCookie, ADMIN_COOKIE_NAME, ADMIN_COOKIE_TTL_DAYS } from "@/lib/auth";
 import { kv } from "@/lib/kv";
 import { checkRateLimit } from "@/lib/rate-limit";
+import { clientIp } from "@/lib/client-ip";
 import { timingSafeEqual } from "node:crypto";
 
 export const runtime = "nodejs";
@@ -14,20 +14,15 @@ function safeEqual(a: string, b: string): boolean {
   return timingSafeEqual(ab, bb);
 }
 
-function isSafePath(p: unknown): p is string {
-  return typeof p === "string" && p.startsWith("/") && !p.startsWith("//") && !p.startsWith("/\\");
-}
-
 export async function POST(req: NextRequest) {
-  const sitePassword = process.env.SITE_PASSWORD;
+  const adminPassword = process.env.ADMIN_PASSWORD;
   const cookieSecret = process.env.COOKIE_SECRET;
-  if (!sitePassword || !cookieSecret) {
+  if (!adminPassword || !cookieSecret) {
     return NextResponse.json({ error: "Server misconfigured" }, { status: 500 });
   }
 
-  // Rate limit FIRST so a bad guess can't bypass the gate by being malformed.
   const ip = clientIp(req);
-  const rl = await checkRateLimit(kv, `auth:login:${ip}`, 5, 600);
+  const rl = await checkRateLimit(kv, `auth:admin-login:${ip}`, 5, 600);
   if (!rl.allowed) {
     return NextResponse.json({ error: "Too many attempts. Try again later." }, {
       status: 429,
@@ -39,21 +34,19 @@ export async function POST(req: NextRequest) {
   try { body = await req.json(); }
   catch { return NextResponse.json({ error: "Invalid JSON" }, { status: 400 }); }
 
-  const { password, from } = (body ?? {}) as { password?: string; from?: string };
-  if (typeof password !== "string" || !safeEqual(password, sitePassword)) {
+  const { password } = (body ?? {}) as { password?: string };
+  if (typeof password !== "string" || !safeEqual(password, adminPassword)) {
     return NextResponse.json({ error: "Wrong password" }, { status: 401 });
   }
 
-  const expiresAt = Date.now() + COOKIE_TTL_DAYS * 24 * 60 * 60 * 1000;
-  const cookieValue = await signCookie(expiresAt, cookieSecret);
-
-  const safeFrom = isSafePath(from) ? from : "/";
-  const res = NextResponse.json({ redirect: safeFrom });
+  const expiresAt = Date.now() + ADMIN_COOKIE_TTL_DAYS * 24 * 60 * 60 * 1000;
+  const cookieValue = await signAdminCookie(expiresAt, cookieSecret);
+  const res = NextResponse.json({ redirect: "/console" });
   res.cookies.set({
-    name: COOKIE_NAME, value: cookieValue,
+    name: ADMIN_COOKIE_NAME, value: cookieValue,
     httpOnly: true, secure: process.env.NODE_ENV === "production",
-    sameSite: "lax", path: "/",
-    maxAge: COOKIE_TTL_DAYS * 24 * 60 * 60,
+    sameSite: "lax", path: "/", // Path=/ so middleware can read it for /api/console/* too
+    maxAge: ADMIN_COOKIE_TTL_DAYS * 24 * 60 * 60,
   });
   return res;
 }
