@@ -2,6 +2,44 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 
 beforeEach(() => vi.resetModules());
 
+describe("normalizeMarkdownFrontmatter", () => {
+  it("injects publish/title/date when missing", async () => {
+    const { normalizeMarkdownFrontmatter } = await import("./github");
+    const out = normalizeMarkdownFrontmatter(
+      { path: "vault-inbox/Plant Logs/Tomato.md", content: "Body only, no frontmatter." },
+      "2026-06-13",
+    );
+    expect(out.content).toMatch(/publish: true/);
+    expect(out.content).toMatch(/title: Tomato/);
+    expect(out.content).toMatch(/date: '2026-06-13'/);
+    expect(out.content).toContain("Body only, no frontmatter.");
+  });
+
+  it("preserves existing valid frontmatter", async () => {
+    const { normalizeMarkdownFrontmatter } = await import("./github");
+    const orig = `---\npublish: true\ntitle: Existing\ndate: '2026-05-17'\n---\nbody`;
+    const out = normalizeMarkdownFrontmatter(
+      { path: "content/log/2026-05-17.md", content: orig },
+      "2026-06-13",
+    );
+    expect(out.content).toBe(orig);
+  });
+
+  it("ignores non-md files and assets outside the normalize prefixes", async () => {
+    const { normalizeMarkdownFrontmatter } = await import("./github");
+    const png = normalizeMarkdownFrontmatter(
+      { path: "public/_assets/x.png", content: "base64==", isBinary: true },
+      "2026-06-13",
+    );
+    expect(png.content).toBe("base64==");
+    const assetMd = normalizeMarkdownFrontmatter(
+      { path: "public/_assets/README.md", content: "hi" },
+      "2026-06-13",
+    );
+    expect(assetMd.content).toBe("hi");
+  });
+});
+
 describe("createAiPr", () => {
   it("rejects file paths outside the allowlist", async () => {
     vi.doMock("@octokit/rest", () => ({ Octokit: vi.fn() }));

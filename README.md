@@ -57,22 +57,27 @@ The admin-only `/console` route lets you chat with Claude to diagnose plants, dr
    ```bash
    git clone git@github.com:Sierra458/gardenos-web.git ~/code/gardenos-web-mirror
    ```
-4. Install the launchd job:
+4. Install both launchd jobs:
    ```bash
    cp tools/launchd/io.marsdesigns.gardenos-inbox-sync.plist ~/Library/LaunchAgents/
+   cp tools/launchd/io.marsdesigns.gardenos-vault-publish.plist ~/Library/LaunchAgents/
    launchctl load ~/Library/LaunchAgents/io.marsdesigns.gardenos-inbox-sync.plist
+   launchctl load ~/Library/LaunchAgents/io.marsdesigns.gardenos-vault-publish.plist
    ```
-   Verify it's running:
+   Verify they're running:
    ```bash
    launchctl list | grep gardenos
    tail ~/Library/Logs/gardenos-inbox-sync.log
+   tail ~/Library/Logs/gardenos-vault-publish.log
    ```
+5. Install the home-screen PWA on your phone: open `garden.marsdesigns.io/console` in Safari → Share → Add to Home Screen.
 
 ### Daily use
-- Open `garden.marsdesigns.io/console` on your phone.
+- Open the GardenOS Console PWA from your phone's home screen.
 - Drop photos, ask "what's wrong?" (diagnose) or "tag these from today" (photo note) or "add to today's log: ..." (daily log).
 - When Claude proposes content, reply "commit" to open a PR.
-- Tap the PR link, review the diff, tap Merge. Vercel auto-deploys; vault-inbox files appear in `~/Documents/MaRs/Projects/Garden Monitor/_AI Inbox/` within 5 min.
+- Tap the PR link, review the diff, tap Merge. Vercel auto-deploys; vault-inbox files appear in `~/Documents/MaRs/Projects/Garden Monitor/_AI Inbox/` within 5 min, ready for you to file into their proper vault folders.
+- The `gardenos-vault-publish` job watches the vault every 10 min and re-runs `npm run publish` whenever notes change — so a manual edit, a moved `_AI Inbox/` file, or an iOS Claude update all push to the site without you having to remember.
 
 ### Rollback
 - **Instant:** Vercel Dashboard → Deployments → previous green → Promote to Production.

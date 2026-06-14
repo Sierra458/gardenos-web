@@ -1,4 +1,6 @@
 import { Octokit } from "@octokit/rest";
+import matter from "gray-matter";
+import path from "node:path";
 
 const REPO_OWNER = "Sierra458";
 const REPO_NAME = "gardenos-web";
@@ -6,6 +8,7 @@ const BASE_BRANCH = "main";
 
 const PATH_ALLOWLIST_RE = /^(content|vault-inbox|public\/_assets)\/[a-zA-Z0-9_/.-]+\.(md|jpg|jpeg|png|webp)$/;
 const DENY_RE = /(\.\.)|(^\/)|(\\)|(\.github\/)|(node_modules\/)|(\.env)|(package(-lock)?\.json)/;
+const NORMALIZE_FRONTMATTER_PREFIXES = ["content/", "vault-inbox/"];
 
 const MAX_FILES_PER_PR = 50;
 const MAX_FILE_BYTES = 5 * 1024 * 1024;
@@ -24,6 +27,28 @@ export interface PrFile {
 export interface CreatedPr {
   url: string;
   number: number;
+}
+
+// Markdown files headed for content/ or vault-inbox/ MUST carry `publish: true`,
+// `title`, and `date` frontmatter — tools/sync.ts requires the trio. Inject
+// safe defaults so a malformed AI draft can't slip a borked note into main.
+export function normalizeMarkdownFrontmatter(file: PrFile, today: string): PrFile {
+  if (file.isBinary || !file.path.endsWith(".md")) return file;
+  if (!NORMALIZE_FRONTMATTER_PREFIXES.some(p => file.path.startsWith(p))) return file;
+  const parsed = matter(file.content);
+  const fm = { ...(parsed.data as Record<string, unknown>) };
+  let changed = false;
+  if (fm.publish !== true) { fm.publish = true; changed = true; }
+  if (typeof fm.title !== "string" || fm.title.trim() === "") {
+    fm.title = path.basename(file.path, ".md");
+    changed = true;
+  }
+  if (typeof fm.date !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(fm.date)) {
+    fm.date = today;
+    changed = true;
+  }
+  if (!changed) return file;
+  return { ...file, content: matter.stringify(parsed.content, fm) };
 }
 
 function validateFiles(files: PrFile[]): void {
@@ -48,7 +73,9 @@ export async function createAiPr(args: {
   files: PrFile[];
   branchPrefix?: string;
 }): Promise<CreatedPr> {
-  validateFiles(args.files);
+  const today = new Date().toISOString().slice(0, 10);
+  const files = args.files.map(f => normalizeMarkdownFrontmatter(f, today));
+  validateFiles(files);
   const token = process.env.GITHUB_TOKEN;
   if (!token) throw new Error("GITHUB_TOKEN missing");
   const octokit = new Octokit({ auth: token });
@@ -66,7 +93,7 @@ export async function createAiPr(args: {
   });
 
   // 3. Commit each file
-  for (const f of args.files) {
+  for (const f of files) {
     const content = f.isBinary ? f.content : Buffer.from(f.content, "utf8").toString("base64");
     await octokit.rest.repos.createOrUpdateFileContents({
       owner: REPO_OWNER, repo: REPO_NAME,
