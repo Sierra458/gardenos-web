@@ -61,4 +61,17 @@ export const DIAGNOSE_PROMPT = `Look at the attached image(s). Identify the plan
 
 Reply in plain text, ≤200 words. No frontmatter, no preamble.`;
 
-// Phase 2 prompts (PHOTO_TAGS_PROMPT, DAILY_LOG_PROMPT) added in Task 22.
+export const PHOTO_TAGS_PROMPT = `Look at the attached images. For each image, identify the dominant plant and any secondary plants visible. Match against ALLOWED PLANT LABELS exactly.
+
+Output a Photos/<date>.md note with:
+- Frontmatter: publish: true, title: "<date> — Garden photos (<count>)", date, and a "photos:" map of {basename.jpg: [Plant1, Plant2]}
+- Body: ![[basename.jpg]] wikilink syntax (NOT standard markdown)
+- Optional brief captions
+
+Filenames will be supplied as basenames (e.g. img_5734.jpg). Use those exact names.`;
+
+export const DAILY_LOG_PROMPT = `Draft a daily log entry for <date>. Use exactly the 5-section template (Today's Focus / Done / Notes / Issues / Carry Forward).
+
+Carry-forward unchecked items from the previous log will be supplied separately — prepend them (still as - [ ] checkboxes) to the Carry Forward section, then add any new ones from today's notes.
+
+Filename convention: "<date> — Garden Monitor.md". Frontmatter title: "<date> — Garden Monitor".`;

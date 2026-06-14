@@ -16,6 +16,9 @@ describe("/api/console/chat", () => {
       convertToModelMessages: vi.fn((m: any) => m),
       tool: (x: any) => x,
     }));
+    vi.doMock("@/lib/console/github", () => ({
+      readFileFromMain: vi.fn().mockResolvedValue(null),
+    }));
   });
 
   it("429s when burst rate limit exceeded", async () => {

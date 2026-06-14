@@ -1,9 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyCookie, COOKIE_NAME, verifyAdminCookie, ADMIN_COOKIE_NAME } from "@/lib/auth";
 
+// PWA install needs /manifest.webmanifest and the icon routes to be reachable
+// pre-auth — the browser fetches them before any user interaction.
 export const config = {
   matcher: [
-    "/((?!api/auth/login(?:/|$)|api/auth/admin-login(?:/|$)|login(?:/|$)|console/login(?:/|$)|_next/static|_next/image|favicon\\.ico|robots\\.txt).*)",
+    "/((?!api/auth/login(?:/|$)|api/auth/admin-login(?:/|$)|login(?:/|$)|console/login(?:/|$)|_next/static|_next/image|favicon\\.ico|robots\\.txt|manifest\\.webmanifest|icon(?:/|$)|apple-icon(?:/|$)).*)",
   ],
 };
 
