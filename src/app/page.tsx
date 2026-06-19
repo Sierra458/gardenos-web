@@ -37,6 +37,7 @@ export default async function HomePage() {
   const logCount = notes.filter(n => n.slug.startsWith("/log/")).length;
   const photoCount = notes.filter(n => n.slug.startsWith("/photos/")).length;
   const plantLogCount = notes.filter(n => n.slug.startsWith("/plant-logs/")).length;
+  const researchCount = notes.filter(n => n.slug.startsWith("/research/")).length;
   // Count plants that have at least one photo tagged.
   const { buildPlantSummaries } = await import("@/lib/plants");
   const plantCount = buildPlantSummaries(notes).filter(p => p.count > 0).length;
@@ -105,6 +106,15 @@ export default async function HomePage() {
       unit: "logs",
       unitSingular: "log",
       description: "Care notes, health ratings, and next actions for every plant.",
+    },
+    {
+      href: "/research",
+      emoji: "📚",
+      label: "Research",
+      count: researchCount,
+      unit: "notes",
+      unitSingular: "note",
+      description: "Reference material: plant profiles, sensing techniques, and protocols.",
     },
   ];
 

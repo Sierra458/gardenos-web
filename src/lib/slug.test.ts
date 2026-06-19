@@ -11,6 +11,7 @@ describe("vaultPathToSiteSlug", () => {
     ["Software/Pi 5 Setup Guide.md", "/software/pi-5-setup-guide"],
     ["Daily Log/2026-03-19 — Garden Monitor.md", "/log/2026-03-19"],
     ["Daily Log/2026-03-18 — Garden Monitor.md", "/log/2026-03-18"],
+    ["Research/Plant Profiles.md", "/research/plant-profiles"],
   ];
   for (const [vault, expected] of cases) {
     it(`maps ${vault} → ${expected}`, () => {
@@ -23,7 +24,7 @@ describe("vaultPathToSiteSlug", () => {
   });
 
   it("returns null for files outside the known top-level folders", () => {
-    expect(vaultPathToSiteSlug("Research/Paper.md")).toBe(null);
+    expect(vaultPathToSiteSlug("Inbox/Note.md")).toBe(null);
     expect(vaultPathToSiteSlug("Templates/Daily.md")).toBe(null);
   });
 });
